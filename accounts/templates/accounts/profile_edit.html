@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="form-block">
+    <h1>Редактирование профиля</h1>
+    <p>Профиль виден всем посетителям сайта. Не указывайте телефон, домашний адрес, расписание и другие личные данные.</p>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="button primary">Сохранить</button>
+    </form>
+</section>
+{% endblock %}

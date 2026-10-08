@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="form-block">
+    <h1>Регистрация</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p>Подробнее:
+            <a href="{% url 'privacy' %}" target="_blank" rel="noopener">
+                политика обработки персональных данных
+            </a>.
+        </p>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+    <p>Уже есть аккаунт? <a href="{% url 'accounts:login' %}">Войти</a></p>
+</section>
+{% endblock %}

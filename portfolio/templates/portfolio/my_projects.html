@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Мои проекты</h1>
+  <p><a href="{% url 'portfolio:create' %}" class="button primary">+ Добавить проект</a></p>
+
+  {% for project in projects %}
+    <div class="card">
+      <h2><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h2>
+      <p><b>Статус: {{ project.get_status_display }}</b></p>
+
+      {% if project.status == 'rejected' and project.moderator_comment %}
+        <p>Причина отклонения: {{ project.moderator_comment }}</p>
+        <p>Исправьте проект и сохраните его: он уйдёт на повторную проверку.</p>
+      {% endif %}
+
+      <a href="{% url 'portfolio:edit' project.pk %}">Редактировать</a>
+      <a href="{% url 'portfolio:delete' project.pk %}">Удалить</a>
+    </div>
+  {% empty %}
+    <p>У вас пока нет проектов.</p>
+  {% endfor %}
+{% endblock %}

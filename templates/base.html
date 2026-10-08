@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}IT-Брянск: платформа школьников{% endblock %}</title>
+    <script>document.documentElement.classList.add('js');</script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=13">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="logo" href="{% url 'home' %}">IT-Брянск</a>
+
+            <button class="nav-toggle" type="button"
+                    aria-expanded="false" aria-controls="site-nav">Меню</button>
+
+            <nav id="site-nav" class="site-nav" aria-label="Основное меню">
+                <a href="{% url 'home' %}">Главная</a>
+                <a href="{% url 'about' %}">О проекте</a>
+                <a href="{% url 'portfolio:list' %}">Проекты</a>
+                <a href="{% url 'team_board:list' %}">Команды</a>
+                <a href="{% url 'events:list' %}">Афиша</a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'portfolio:my' %}">Мои проекты</a>
+                    <a href="{% url 'team_board:my' %}">Мои объявления</a>
+                    <a href="{% url 'accounts:profile' user.id %}">{{ user.username }}</a>
+                    <form class="logout-form" method="post" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">Выйти</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}">Войти</a>
+                    <a class="btn btn-small" href="{% url 'accounts:register' %}">Регистрация</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    {% if user.is_staff %}
+        <div class="staff-bar">
+            <div class="container">
+                Модератор:
+                <a href="{% url 'portfolio:moderation' %}">проекты</a>
+                <a href="{% url 'team_board:moderation' %}">объявления</a>
+                <a href="{% url 'core:reports' %}">жалобы</a>
+            </div>
+        </div>
+    {% endif %}
+
+    <main class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>IT-Брянск: платформа школьников Брянской области</p>
+            <p>
+                <a href="{% url 'portfolio:list' %}">Проекты</a> ·
+                <a href="{% url 'team_board:list' %}">Команды</a> ·
+                <a href="{% url 'events:list' %}">Афиша</a>
+            </p>
+            <p><a href="{% url 'privacy' %}">Политика обработки персональных данных</a></p>
+            <p>© {% now "Y" %}</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}?v=13" defer></script>
+</body>
+</html>

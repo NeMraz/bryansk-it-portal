@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <p>После сохранения проект будет проверен модератором и только потом появится на сайте.</p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="button primary">Сохранить</button>
+  </form>
+{% endblock %}

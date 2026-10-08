@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Проверка: {{ post.title }}</h1>
+  <p>Автор: {{ post.author.username }} | Статус сейчас: <b>{{ post.get_status_display }}</b></p>
+  <p><b>Ищем:</b> {{ post.looking_for }}</p>
+  <div>{{ post.description|linebreaks }}</div>
+
+  <hr>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="action" value="approve">Опубликовать</button>
+    <button type="submit" name="action" value="reject">Отклонить</button>
+  </form>
+  <p><a href="{% url 'team_board:moderation' %}">← К очереди</a></p>
+{% endblock %}

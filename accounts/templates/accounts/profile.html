@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="page-header">
+    <h1>{{ owner.username }}</h1>
+</section>
+
+<section class="info-block">
+    {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="Аватар пользователя" width="150">
+    {% endif %}
+    <p><b>Школа или центр:</b> {{ profile.school|default:"не указано" }}</p>
+    <p><b>Город:</b> {{ profile.city|default:"не указан" }}</p>
+    <p><b>Интересы:</b> {{ profile.interests|default:"не указаны" }}</p>
+    <p><b>О себе:</b> {{ profile.about|default:"пока пусто" }}</p>
+
+    {% if user == owner %}
+        <a href="{% url 'accounts:profile_edit' %}" class="button primary">Редактировать профиль</a>
+    {% endif %}
+</section>
+{% endblock %}

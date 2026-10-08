@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Проверка: {{ project.title }}</h1>
+  <p>
+    Автор: {{ project.author.username }}
+    | Статус сейчас: <b>{{ project.get_status_display }}</b>
+  </p>
+
+  {% if project.image %}
+    <img src="{{ project.image.url }}" alt="{{ project.title }}" width="400">
+  {% endif %}
+  <p>{{ project.description|linebreaks }}</p>
+  {% if project.github_url %}<p>GitHub: {{ project.github_url }}</p>{% endif %}
+  {% if project.demo_url %}<p>Демо: {{ project.demo_url }}</p>{% endif %}
+  <p>
+    {% for tag in project.tags.all %}<span class="tag">#{{ tag.name }}</span> {% endfor %}
+  </p>
+
+  <hr>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="action" value="approve" class="button primary">Опубликовать</button>
+    <button type="submit" name="action" value="reject" class="button">Отклонить</button>
+  </form>
+  <p><a href="{% url 'portfolio:moderation' %}">← К очереди</a></p>
+{% endblock %}

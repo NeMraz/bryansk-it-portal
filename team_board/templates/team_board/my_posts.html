@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Мои объявления</h1>
+  <p><a href="{% url 'team_board:create' %}">+ Новое объявление</a></p>
+
+  {% for post in posts %}
+    <div class="card">
+      <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+      <p>
+        <b>Статус: {{ post.get_status_display }}</b>
+        | {% if post.is_open %}Набор открыт{% else %}Набор закрыт{% endif %}
+        | Откликов: {{ post.responses_count }}
+      </p>
+      {% if post.status == 'rejected' and post.moderator_comment %}
+        <p>Причина отклонения: {{ post.moderator_comment }}</p>
+        <p>Исправьте объявление и сохраните его: оно уйдёт на повторную проверку.</p>
+      {% endif %}
+      <p>
+        <a href="{% url 'team_board:edit' post.pk %}">Редактировать</a>
+        <a href="{% url 'team_board:delete' post.pk %}">Удалить</a>
+      </p>
+    </div>
+  {% empty %}
+    <p>У вас пока нет объявлений.</p>
+  {% endfor %}
+{% endblock %}

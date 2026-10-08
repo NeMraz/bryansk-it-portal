@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Ищу команду</h1>
+
+  {% if user.is_authenticated %}
+    <p><a class="btn" href="{% url 'team_board:create' %}">+ Новое объявление</a></p>
+  {% else %}
+    <p><a href="{% url 'accounts:login' %}">Войдите</a>, чтобы разместить объявление или откликнуться.</p>
+  {% endif %}
+
+  <p>
+    {% if show_closed %}
+      Показаны все объявления. <a href="?">Только с открытым набором</a>
+    {% else %}
+      Показаны объявления с открытым набором. <a href="?closed=1">Показать и закрытые</a>
+    {% endif %}
+  </p>
+
+  <div class="card-grid">
+    {% for post in page_obj %}
+      <div class="card">
+        <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+        <p><b>Ищем:</b> {{ post.looking_for }}</p>
+        <p>{{ post.description|truncatechars:150 }}</p>
+        <p>
+          Автор:
+          <a href="{% url 'accounts:profile' post.author.id %}">{{ post.author.username }}</a>
+          | {{ post.created_at|date:"d.m.Y" }}
+          | {% if post.is_open %}Набор открыт{% else %}Набор закрыт{% endif %}
+        </p>
+      </div>
+    {% empty %}
+      <p>Пока нет объявлений. Разместите первое!</p>
+    {% endfor %}
+  </div>
+
+  <div>
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if show_closed %}&amp;closed=1{% endif %}">← Назад</a>
+    {% endif %}
+    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if show_closed %}&amp;closed=1{% endif %}">Вперёд →</a>
+    {% endif %}
+  </div>
+{% endblock %}

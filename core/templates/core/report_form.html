@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Пожаловаться</h1>
+  <p>Материал: «{{ preview }}»</p>
+  <p>Опишите, что не так. Жалобу увидят только модераторы.</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Отправить жалобу</button>
+    <a href="{{ url }}">Отмена</a>
+  </form>
+{% endblock %}

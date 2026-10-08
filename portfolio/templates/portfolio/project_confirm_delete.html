@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Удалить проект «{{ project.title }}»?</h1>
+  <p>Это действие нельзя отменить.</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="button">Да, удалить</button>
+    <a href="{{ project.get_absolute_url }}" class="button secondary">Отмена</a>
+  </form>
+{% endblock %}

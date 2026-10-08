@@ -1,0 +1,31 @@
+<header class="site-header">
+    <div class="container nav-wrapper">
+        <a href="{% url 'home' %}" class="brand">Брянский IT</a>
+        <nav class="main-nav">
+            <a href="{% url 'home' %}">Главная</a>
+            <a href="{% url 'about' %}">О проекте</a>
+            <a href="{% url 'portfolio:list' %}">Проекты</a>
+            <a href="{% url 'team_board:list' %}">Команда</a>
+            <a href="{% url 'events:list' %}">Афиша</a>
+        </nav>
+        <div class="nav-actions">
+            {% if user.is_authenticated %}
+                <a href="{% url 'accounts:profile' user.id %}">{{ user.username }}</a>
+                <a href="{% url 'portfolio:my' %}">Мои проекты</a>
+                <a href="{% url 'team_board:my' %}">Мои объявления</a>
+                {% if user.is_staff %}
+                    <a href="{% url 'portfolio:moderation' %}">Модерация</a>
+                    <a href="{% url 'team_board:moderation' %}">Модерация объявлений</a>
+                    <a href="{% url 'core:reports' %}">Жалобы</a>
+                {% endif %}
+                <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit">Выйти</button>
+                </form>
+            {% else %}
+                <a href="{% url 'accounts:login' %}">Войти</a>
+                <a href="{% url 'accounts:register' %}" class="button">Регистрация</a>
+            {% endif %}
+        </div>
+    </div>
+</header>

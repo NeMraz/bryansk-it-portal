@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ post.title }}</h1>
+
+  {% if post.status != 'approved' %}
+    <div class="status">
+      <b>Статус: {{ post.get_status_display }}</b>
+      {% if post.moderator_comment %}
+        <p>Комментарий модератора: {{ post.moderator_comment }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <p>
+    Автор:
+    <a href="{% url 'accounts:profile' post.author.id %}">{{ post.author.username }}</a>
+    | {{ post.created_at|date:"d.m.Y" }}
+    | <b>{% if post.is_open %}Набор открыт{% else %}Набор закрыт{% endif %}</b>
+  </p>
+  <p><b>Ищем:</b> {{ post.looking_for }}</p>
+  <div>{{ post.description|linebreaks }}</div>
+
+  {% if user.is_authenticated and not is_owner and post.status == 'approved' %}
+    <p><a href="{% url 'core:report' 'team_post' post.pk %}">Пожаловаться на объявление</a></p>
+  {% endif %}
+
+  {% if is_owner %}
+    <p>
+      <a href="{% url 'team_board:edit' post.pk %}">Редактировать</a>
+      <a href="{% url 'team_board:delete' post.pk %}">Удалить</a>
+    </p>
+    <form method="post" action="{% url 'team_board:toggle' post.pk %}">
+      {% csrf_token %}
+      <button type="submit">
+        {% if post.is_open %}Закрыть набор{% else %}Открыть набор снова{% endif %}
+      </button>
+    </form>
+  {% endif %}
+  {% if user.is_staff %}
+    <p><a href="{% url 'team_board:moderate' post.pk %}">Модерация</a></p>
+  {% endif %}
+
+  {% if post.status == 'approved' %}
+    <section id="responses">
+      {% if can_see_responses %}
+        <h2>Отклики ({{ responses|length }})</h2>
+        {% for response in responses %}
+          <div class="comment">
+            <p>
+              <a href="{% url 'accounts:profile' response.author.id %}">{{ response.author.username }}</a>
+              | {{ response.created_at|date:"d.m.Y H:i" }}
+            </p>
+            <p>{{ response.message|linebreaksbr }}</p>
+            {% if is_owner %}
+              <a href="{% url 'core:report' 'response' response.pk %}">Пожаловаться</a>
+            {% endif %}
+          </div>
+        {% empty %}
+          <p>Откликов пока нет.</p>
+        {% endfor %}
+      {% endif %}
+
+      {% if not is_owner %}
+        {% if not user.is_authenticated %}
+          <p><a href="{% url 'accounts:login' %}">Войдите</a>, чтобы откликнуться.</p>
+        {% elif not post.is_open %}
+          <p>Набор в команду закрыт.</p>
+        {% elif already_responded %}
+          <p>Вы уже откликнулись на это объявление.</p>
+        {% else %}
+          <h2>Откликнуться</h2>
+          <p>
+            Напишите, чем можете помочь. Не указывайте телефон и домашний адрес:
+            сообщение увидят только автор объявления и модераторы.
+          </p>
+          <form method="post" action="{% url 'team_board:respond' post.pk %}">
+            {% csrf_token %}
+            {{ response_form.as_p }}
+            <button type="submit">Отправить отклик</button>
+          </form>
+        {% endif %}
+      {% endif %}
+    </section>
+  {% endif %}
+
+  <p><a href="{% url 'team_board:list' %}">← Ко всем объявлениям</a></p>
+{% endblock %}
