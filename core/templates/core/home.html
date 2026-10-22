@@ -2,36 +2,52 @@
 
 {% block content %}
   <section class="hero">
-    <h1>Платформа школьников Брянской области</h1>
-    <p>
-      Публикуйте IT-проекты, находите единомышленников и узнавайте о
-      мастер-классах и соревнованиях региона.
-    </p>
-    <div class="actions">
-      <a class="btn" href="{% url "portfolio:list" %}">Смотреть проекты</a>
-      {% if user.is_authenticated %}
-        <a class="btn-outline" href="{% url "portfolio:create" %}">Добавить проект</a>
-      {% else %}
-        <a class="btn-outline" href="{% url "accounts:register" %}">Зарегистрироваться</a>
-      {% endif %}
-    </div>
-    <div class="stats">
-      <div class="stat"><b>{{ stats.projects }}</b><span>опубликованных проектов</span></div>
-      <div class="stat"><b>{{ stats.users }}</b><span>участников</span></div>
-      <div class="stat"><b>{{ stats.open_posts }}</b><span>ищут команду</span></div>
+    <div style="position:relative; z-index:2;">
+      <h1>Платформа школьников Брянской области</h1>
+      <p>
+        Публикуйте свои IT-проекты, находите единомышленников для команд и
+        узнавайте о мастер-классах и соревнованиях региона.
+      </p>
+      <div class="actions">
+        <a class="btn" href="{% url "portfolio:list" %}">Смотреть проекты</a>
+        {% if user.is_authenticated %}
+          <a class="btn-outline" href="{% url "portfolio:create" %}">Добавить проект</a>
+        {% else %}
+          <a class="btn-outline" href="{% url "accounts:register" %}">Зарегистрироваться</a>
+        {% endif %}
+      </div>
     </div>
   </section>
+
+  <div class="stats">
+    <div class="stat">
+      <b>{{ stats.projects }}</b>
+      <span>опубликованных проектов</span>
+    </div>
+    <div class="stat">
+      <b>{{ stats.users }}</b>
+      <span>участников портала</span>
+    </div>
+    <div class="stat">
+      <b>{{ stats.open_posts }}</b>
+      <span>ищут команду</span>
+    </div>
+  </div>
 
   <section>
     <div class="section-head">
       <h2>Новые проекты</h2>
-      <a href="{% url "portfolio:list" %}">Все проекты →</a>
+      <a href="{% url "portfolio:list" %}?sort=new">Все новые проекты →</a>
     </div>
     <div class="card-grid">
       {% for project in projects %}
         <div class="card">
           {% if project.image %}
             <img src="{{ project.image.url }}" alt="{{ project.title }}">
+          {% else %}
+            <div style="width:100%; height:170px; background:var(--brand-light); border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--brand-hover); font-weight:700; font-size:1.25rem;">
+              {{ project.title|slice:":1" }}
+            </div>
           {% endif %}
           <h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
           <p class="meta">
@@ -40,7 +56,7 @@
           </p>
         </div>
       {% empty %}
-        <p>Пока нет опубликованных проектов. Станьте первым!</p>
+        <p class="empty">Пока нет опубликованных проектов. Станьте первым!</p>
       {% endfor %}
     </div>
   </section>
@@ -58,7 +74,7 @@
           <p class="meta">{{ event.starts_at|date:"j E, H:i" }} · {{ event.place }}</p>
         </div>
       {% empty %}
-        <p>Ближайших событий пока нет.</p>
+        <p class="empty">Ближайших событий пока нет.</p>
       {% endfor %}
     </div>
   </section>
@@ -78,7 +94,7 @@
           </p>
         </div>
       {% empty %}
-        <p>Открытых объявлений пока нет.</p>
+        <p class="empty">Открытых объявлений пока нет.</p>
       {% endfor %}
     </div>
   </section>
