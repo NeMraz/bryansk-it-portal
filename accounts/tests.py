@@ -99,6 +99,46 @@ class AccountsFlowTests(TestCase):
         )
 
 
+class AccountAvatarTests(TestCase):
+    def setUp(self):
+        self.media_directory = TemporaryDirectory()
+        self.addCleanup(self.media_directory.cleanup)
+        media_settings = override_settings(MEDIA_ROOT=self.media_directory.name)
+        media_settings.enable()
+        self.addCleanup(media_settings.disable)
+
+    def test_avatar_must_be_a_real_image(self):
+        user = get_user_model().objects.create_user(
+            username="student",
+            password="test-password-97",
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(
+            reverse("accounts:profile_edit"),
+            {
+                "school": "Школа № 1",
+                "city": "Брянск",
+                "interests": "Python",
+                "about": "Изучаю Django",
+                "avatar": SimpleUploadedFile(
+                    "avatar.png",
+                    b"<?php echo 'hacked'; ?>",
+                    content_type="image/png",
+                ),
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        form = response.context["form"]
+        self.assertTrue(
+            any("изображение" in error for error in form.errors["avatar"]),
+            form.errors["avatar"],
+        )
+        user.profile.refresh_from_db()
+        self.assertFalse(user.profile.avatar)
+
+
 class AccountRegressionTests(TestCase):
     def test_registration_rejects_weak_password_and_duplicate_username(self):
         weak_response = self.client.post(

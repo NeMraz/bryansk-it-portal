@@ -1,9 +1,11 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block title %}Доступ запрещён{% endblock %}
 
 {% block content %}
-  <h1>Доступ запрещён (403)</h1>
-  <p>У вас нет прав для этого действия.</p>
-  <p><a class="btn" href="{% url 'home' %}">На главную</a></p>
+  <section class="empty">
+    <h1>Доступ запрещён (403)</h1>
+    <p>У вас нет прав для этого действия.</p>
+    <p><a class="btn" href="{% url "home" %}">На главную</a></p>
+  </section>
 {% endblock %}

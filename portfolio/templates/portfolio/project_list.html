@@ -1,9 +1,10 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Проекты · IT-Брянск{% endblock %}
 
 {% block content %}
   <h1>Проекты школьников</h1>
 
-  <!-- Поиск и фильтр используют GET, поэтому параметры видны в адресе страницы. -->
   <form method="get">
     <input type="text" name="q" value="{{ q }}"
            placeholder="Поиск по названию и описанию" maxlength="100">
@@ -16,17 +17,17 @@
       {% endfor %}
     </select>
     <input type="hidden" name="sort" value="{{ sort }}">
-    <button type="submit">Найти</button>
+    <button type="submit" class="btn">Найти</button>
     {% if q or selected_tag %}
-      <a href="?sort={{ sort }}">Сбросить</a>
+      <a href="?sort={{ sort }}" class="btn-ghost">Сбросить</a>
     {% endif %}
   </form>
 
-  <p>
+  <p class="meta">
     Сортировка:
-    {% if sort == 'new' %}<b>Новые</b>{% else %}<a href="?{{ filter_query }}&amp;sort=new">Новые</a>{% endif %}
+    {% if sort == "new" %}<b>Новые</b>{% else %}<a href="?{{ filter_query }}&amp;sort=new">Новые</a>{% endif %}
     |
-    {% if sort == 'popular' %}<b>Популярные</b>{% else %}<a href="?{{ filter_query }}&amp;sort=popular">Популярные</a>{% endif %}
+    {% if sort == "popular" %}<b>Популярные</b>{% else %}<a href="?{{ filter_query }}&amp;sort=popular">Популярные</a>{% endif %}
   </p>
 
   {% if q or selected_tag %}
@@ -34,9 +35,9 @@
   {% endif %}
 
   {% if user.is_authenticated %}
-    <p><a href="{% url 'portfolio:create' %}" class="btn">+ Добавить проект</a></p>
+    <p><a href="{% url "portfolio:create" %}" class="btn">+ Добавить проект</a></p>
   {% else %}
-    <p><a href="{% url 'accounts:login' %}">Войдите</a>, чтобы добавить свой проект.</p>
+    <p><a href="{% url "accounts:login" %}">Войдите</a>, чтобы добавить свой проект.</p>
   {% endif %}
 
   <div class="card-grid">
@@ -47,34 +48,29 @@
         {% endif %}
         <h2><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h2>
         <p>{{ project.description|truncatechars:150 }}</p>
-        <p>
+        <p class="meta">
           Автор:
-          <a href="{% url 'accounts:profile' project.author.id %}">{{ project.author.username }}</a>
+          <a href="{% url "accounts:profile" project.author.id %}">{{ project.author.username }}</a>
           | {{ project.created_at|date:"d.m.Y" }}
         </p>
-        <p>Голосов: {{ project.votes_count }} | Комментариев: {{ project.comments_count }}</p>
+        <p class="meta">Голосов: {{ project.votes_count }} | Комментариев: {{ project.comments_count }}</p>
         <p>
           {% for tag in project.tags.all %}
-            <a class="tag" href="?q={{ q|urlencode }}&amp;tag={{ tag.id }}&amp;sort={{ sort }}">#{{ tag.name }}</a>
+            <a class="tag" href="{% url "portfolio:list" %}?q={{ q|urlencode }}&amp;tag={{ tag.id }}&amp;sort={{ sort }}">#{{ tag.name }}</a>
           {% endfor %}
         </p>
       </div>
     {% empty %}
-      {% if q or selected_tag %}
-        <p>Ничего не найдено. Попробуйте другой запрос или <a href="?sort={{ sort }}">сбросьте фильтры</a>.</p>
-      {% else %}
-        <p>Пока нет ни одного проекта. Будьте первым!</p>
-      {% endif %}
+      <p class="empty">
+        {% if q or selected_tag %}
+          Ничего не найдено. Попробуйте другой запрос или
+          <a href="?sort={{ sort }}">сбросьте фильтры</a>.
+        {% else %}
+          Пока нет ни одного проекта. Будьте первым!
+        {% endif %}
+      </p>
     {% endfor %}
   </div>
 
-  <div>
-    {% if page_obj.has_previous %}
-      <a href="?{{ filter_query }}&amp;sort={{ sort }}&amp;page={{ page_obj.previous_page_number }}">← Назад</a>
-    {% endif %}
-    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
-    {% if page_obj.has_next %}
-      <a href="?{{ filter_query }}&amp;sort={{ sort }}&amp;page={{ page_obj.next_page_number }}">Вперёд →</a>
-    {% endif %}
-  </div>
+  {% include "includes/pagination.html" with filter_query=filter_query %}
 {% endblock %}

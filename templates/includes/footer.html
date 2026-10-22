@@ -1,6 +1,12 @@
 <footer class="site-footer">
-    <div class="container footer-inner">
-        <p>© 2026 Брянский IT-портал для школьников</p>
-        <p>Платформа для проектов, команд и мероприятий</p>
+    <div class="container">
+        <p>IT-Брянск — платформа школьников Брянской области</p>
+        <p>
+            <a href="{% url "portfolio:list" %}">Проекты</a> ·
+            <a href="{% url "team_board:list" %}">Команды</a> ·
+            <a href="{% url "events:list" %}">Афиша</a>
+        </p>
+        <p><a href="{% url "privacy" %}">Политика обработки персональных данных</a></p>
+        <p>© {% now "Y" %}</p>
     </div>
 </footer>

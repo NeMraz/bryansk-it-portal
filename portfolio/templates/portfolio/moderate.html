@@ -1,28 +1,36 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Проверка: {{ project.title }} · IT-Брянск{% endblock %}
 
 {% block content %}
   <h1>Проверка: {{ project.title }}</h1>
-  <p>
+  <p class="meta">
     Автор: {{ project.author.username }}
     | Статус сейчас: <b>{{ project.get_status_display }}</b>
   </p>
 
   {% if project.image %}
-    <img src="{{ project.image.url }}" alt="{{ project.title }}" width="400">
+    <img src="{{ project.image.url }}" alt="{{ project.title }}" style="max-width:480px; margin:12px 0;">
   {% endif %}
   <p>{{ project.description|linebreaks }}</p>
   {% if project.github_url %}<p>GitHub: {{ project.github_url }}</p>{% endif %}
   {% if project.demo_url %}<p>Демо: {{ project.demo_url }}</p>{% endif %}
   <p>
-    {% for tag in project.tags.all %}<span class="tag">#{{ tag.name }}</span> {% endfor %}
+    {% for tag in project.tags.all %}<span class="badge badge-approved">#{{ tag.name }}</span> {% endfor %}
   </p>
 
   <hr>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" name="action" value="approve" class="button primary">Опубликовать</button>
-    <button type="submit" name="action" value="reject" class="button">Отклонить</button>
+    <div class="form-group">
+        {{ form.comment.label_tag }}
+        {{ form.comment }}
+        {{ form.comment.errors }}
+    </div>
+    <div class="btn-group">
+      <button type="submit" name="action" value="approve" class="btn">Опубликовать</button>
+      <button type="submit" name="action" value="reject" class="btn btn-outline">Отклонить</button>
+    </div>
   </form>
-  <p><a href="{% url 'portfolio:moderation' %}">← К очереди</a></p>
+  <p><a href="{% url "portfolio:moderation" %}" class="btn-ghost btn-sm">← К очереди</a></p>
 {% endblock %}

@@ -1,17 +1,25 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Проверка: {{ post.title }} · IT-Брянск{% endblock %}
 
 {% block content %}
   <h1>Проверка: {{ post.title }}</h1>
-  <p>Автор: {{ post.author.username }} | Статус сейчас: <b>{{ post.get_status_display }}</b></p>
+  <p class="meta">Автор: {{ post.author.username }} | Статус сейчас: <b>{{ post.get_status_display }}</b></p>
   <p><b>Ищем:</b> {{ post.looking_for }}</p>
   <div>{{ post.description|linebreaks }}</div>
 
   <hr>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" name="action" value="approve">Опубликовать</button>
-    <button type="submit" name="action" value="reject">Отклонить</button>
+    <div class="form-group">
+        {{ form.comment.label_tag }}
+        {{ form.comment }}
+        {{ form.comment.errors }}
+    </div>
+    <div class="btn-group">
+      <button type="submit" name="action" value="approve" class="btn">Опубликовать</button>
+      <button type="submit" name="action" value="reject" class="btn btn-outline">Отклонить</button>
+    </div>
   </form>
-  <p><a href="{% url 'team_board:moderation' %}">← К очереди</a></p>
+  <p><a href="{% url "team_board:moderation" %}" class="btn-ghost btn-sm">← К очереди</a></p>
 {% endblock %}

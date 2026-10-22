@@ -1,4 +1,6 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Модерация объявлений · IT-Брянск{% endblock %}
 
 {% block content %}
   <h1>Модерация объявлений</h1>
@@ -7,8 +9,8 @@
   {% for post in posts %}
     <div class="card">
       <h2>{{ post.title }}</h2>
-      <p>Автор: {{ post.author.username }} | {{ post.created_at|date:"d.m.Y H:i" }}</p>
-      <a href="{% url 'team_board:moderate' post.pk %}">Проверить</a>
+      <p class="meta">Автор: {{ post.author.username }} | {{ post.created_at|date:"d.m.Y H:i" }}</p>
+      <a href="{% url "team_board:moderate" post.pk %}" class="btn btn-sm">Проверить</a>
     </div>
   {% empty %}
     <p>Очередь пуста.</p>
