@@ -24,9 +24,7 @@
             </nav>
 
             <div class="nav-actions">
-                <button class="theme-toggle" type="button" aria-label="Переключить тему оформления" title="Темная тема">
-                    🌙
-                </button>
+                <button class="theme-toggle" type="button" aria-pressed="false">Тема</button>
                 {% if user.is_authenticated %}
                     <a href="{% url "portfolio:my" %}" class="btn-ghost">Мои проекты</a>
                     <a href="{% url "team_board:my" %}" class="btn-ghost">Мои объявления</a>
