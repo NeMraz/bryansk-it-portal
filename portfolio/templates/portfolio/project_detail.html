@@ -1,25 +1,27 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} · IT-Брянск{% endblock %}
 
 {% block content %}
   <h1>{{ project.title }}</h1>
 
-  {% if project.status != 'approved' %}
-    <div class="status-box">
-      <b>Статус: {{ project.get_status_display }}</b>
+  {% if project.status != "approved" %}
+    <div class="status-chip status-chip-{{ project.status }}">
+      <b>Статус:</b> {{ project.get_status_display }}
       {% if project.moderator_comment %}
-        <p>Комментарий модератора: {{ project.moderator_comment }}</p>
+        <br><small>Комментарий модератора: {{ project.moderator_comment }}</small>
       {% endif %}
     </div>
   {% endif %}
 
-  <p>
+  <p class="meta">
     Автор:
-    <a href="{% url 'accounts:profile' project.author.id %}">{{ project.author.username }}</a>
+    <a href="{% url "accounts:profile" project.author.id %}">{{ project.author.username }}</a>
     | {{ project.created_at|date:"d.m.Y" }}
   </p>
 
   {% if project.image %}
-    <img src="{{ project.image.url }}" alt="{{ project.title }}" width="400">
+    <img src="{{ project.image.url }}" alt="{{ project.title }}" style="max-width:480px; margin:12px 0;">
   {% endif %}
 
   <p>{{ project.description|linebreaks }}</p>
@@ -31,72 +33,73 @@
     <p><a href="{{ project.demo_url }}" target="_blank" rel="noopener">Демо</a></p>
   {% endif %}
 
-  <div class="votes">
+  <div class="votes card" style="max-width:360px;">
     <p><b>Голосов: {{ votes_count }}</b></p>
 
-    {% if project.status == 'approved' %}
+    {% if project.status == "approved" %}
       {% if user.is_authenticated %}
         {% if user == project.author %}
-          <p>За свой проект голосовать нельзя.</p>
+          <p class="meta">За свой проект голосовать нельзя.</p>
         {% else %}
-          <form method="post" action="{% url 'portfolio:vote' project.pk %}">
+          <form method="post" action="{% url "portfolio:vote" project.pk %}" style="display:inline;">
             {% csrf_token %}
             {% if user_voted %}
-              <button type="submit">Убрать голос</button>
+              <button type="submit" class="btn btn-outline btn-sm">Убрать голос</button>
             {% else %}
-              <button type="submit">Проголосовать</button>
+              <button type="submit" class="btn btn-sm">Проголосовать</button>
             {% endif %}
           </form>
         {% endif %}
       {% else %}
-        <p><a href="{% url 'accounts:login' %}">Войдите</a>, чтобы проголосовать.</p>
+        <p class="meta"><a href="{% url "accounts:login" %}">Войдите</a>, чтобы проголосовать.</p>
       {% endif %}
     {% endif %}
   </div>
 
-  {% if user.is_authenticated and user != project.author and project.status == 'approved' %}
-    <p><a href="{% url 'core:report' 'project' project.pk %}">Пожаловаться на проект</a></p>
+  {% if user.is_authenticated and user != project.author and project.status == "approved" %}
+    <p><a href="{% url "core:report" "project" project.pk %}" class="btn-ghost btn-sm">Пожаловаться на проект</a></p>
   {% endif %}
 
-  <p>
+  <p class="meta">
     {% for tag in project.tags.all %}
-      <a class="tag" href="{% url 'portfolio:list' %}?tag={{ tag.id }}">#{{ tag.name }}</a>
+      <a class="tag" href="{% url "portfolio:list" %}?tag={{ tag.id }}">#{{ tag.name }}</a>
     {% endfor %}
   </p>
 
   {% if user == project.author %}
     <p>
-      <a href="{% url 'portfolio:edit' project.pk %}" class="button secondary">Редактировать</a>
-      <a href="{% url 'portfolio:delete' project.pk %}" class="button">Удалить</a>
+      <a href="{% url "portfolio:edit" project.pk %}" class="btn-outline btn-sm">Редактировать</a>
+      <a href="{% url "portfolio:delete" project.pk %}" class="btn-ghost btn-sm">Удалить</a>
     </p>
   {% endif %}
 
   {% if user.is_staff %}
-    <p><a href="{% url 'portfolio:moderate' project.pk %}">Модерация</a></p>
+    <p><a href="{% url "portfolio:moderate" project.pk %}" class="btn-ghost btn-sm">Модерация</a></p>
   {% endif %}
 
-  {% if project.status == 'approved' %}
-    <section id="comments">
+  {% if project.status == "approved" %}
+    <section id="comments" style="margin-top:24px;">
       <h2>Комментарии ({{ comments|length }})</h2>
 
       {% for comment in comments %}
-        <div class="comment">
-          <p>
-            <a href="{% url 'accounts:profile' comment.author.id %}">{{ comment.author.username }}</a>
+        <div class="comment card" style="padding:12px 16px;">
+          <p class="meta">
+            <a href="{% url "accounts:profile" comment.author.id %}">{{ comment.author.username }}</a>
             | {{ comment.created_at|date:"d.m.Y H:i" }}
           </p>
           <p>{{ comment.text|linebreaksbr }}</p>
 
           {% if user.is_authenticated and user != comment.author %}
-            <a href="{% url 'core:report' 'comment' comment.pk %}">Пожаловаться</a>
+            <a href="{% url "core:report" "comment" comment.pk %}" class="btn-ghost btn-sm">Пожаловаться</a>
           {% endif %}
 
           {% if user == comment.author or user.is_staff %}
             <form method="post"
-                  action="{% url 'portfolio:comment_delete' comment.pk %}"
-                  onsubmit="return confirm('Удалить комментарий?');">
+                  action="{% url "portfolio:comment_delete" comment.pk %}"
+                  onsubmit="return confirm('Удалить комментарий?');"
+                  style="display:inline;">
               {% csrf_token %}
-              <button type="submit">Удалить</button>
+              <button type="submit" class="btn-ghost btn-sm">Удалить</button>
             </form>
           {% endif %}
         </div>
@@ -105,16 +108,20 @@
       {% endfor %}
 
       {% if user.is_authenticated %}
-        <form method="post" action="{% url 'portfolio:comment_create' project.pk %}">
+        <form method="post" action="{% url "portfolio:comment_create" project.pk %}" style="margin-top:12px;">
           {% csrf_token %}
-          {{ comment_form.as_p }}
-          <button type="submit">Отправить</button>
+          <div class="form-group">
+            {{ comment_form.text.label_tag }}
+            {{ comment_form.text }}
+            {{ comment_form.text.errors }}
+          </div>
+          <button type="submit" class="btn btn-sm">Отправить</button>
         </form>
       {% else %}
-        <p><a href="{% url 'accounts:login' %}">Войдите</a>, чтобы оставить комментарий.</p>
+        <p><a href="{% url "accounts:login" %}">Войдите</a>, чтобы оставить комментарий.</p>
       {% endif %}
     </section>
   {% endif %}
 
-  <p><a href="{% url 'portfolio:list' %}">← Ко всем проектам</a></p>
+  <p><a href="{% url "portfolio:list" %}" class="btn-ghost btn-sm">← Ко всем проектам</a></p>
 {% endblock %}

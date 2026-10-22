@@ -1,28 +1,31 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
   <section class="hero">
     <h1>Платформа школьников Брянской области</h1>
-    <p>Публикуйте IT-проекты, находите единомышленников и узнавайте о мастер-классах и соревнованиях региона.</p>
     <p>
-      <a class="btn" href="{% url 'portfolio:list' %}">Смотреть проекты</a>
-      {% if user.is_authenticated %}
-        <a class="btn btn-outline" href="{% url 'portfolio:create' %}">Добавить проект</a>
-      {% else %}
-        <a class="btn btn-outline" href="{% url 'accounts:register' %}">Зарегистрироваться</a>
-      {% endif %}
+      Публикуйте IT-проекты, находите единомышленников и узнавайте о
+      мастер-классах и соревнованиях региона.
     </p>
+    <div class="actions">
+      <a class="btn" href="{% url "portfolio:list" %}">Смотреть проекты</a>
+      {% if user.is_authenticated %}
+        <a class="btn-outline" href="{% url "portfolio:create" %}">Добавить проект</a>
+      {% else %}
+        <a class="btn-outline" href="{% url "accounts:register" %}">Зарегистрироваться</a>
+      {% endif %}
+    </div>
     <div class="stats">
-      <div class="stat"><b>{{ stats.projects }}</b> проектов</div>
-      <div class="stat"><b>{{ stats.users }}</b> участников</div>
-      <div class="stat"><b>{{ stats.open_posts }}</b> ищут команду</div>
+      <div class="stat"><b>{{ stats.projects }}</b><span>опубликованных проектов</span></div>
+      <div class="stat"><b>{{ stats.users }}</b><span>участников</span></div>
+      <div class="stat"><b>{{ stats.open_posts }}</b><span>ищут команду</span></div>
     </div>
   </section>
 
   <section>
     <div class="section-head">
       <h2>Новые проекты</h2>
-      <a href="{% url 'portfolio:list' %}">Все проекты →</a>
+      <a href="{% url "portfolio:list" %}">Все проекты →</a>
     </div>
     <div class="card-grid">
       {% for project in projects %}
@@ -32,7 +35,7 @@
           {% endif %}
           <h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
           <p class="meta">
-            <a href="{% url 'accounts:profile' project.author.id %}">{{ project.author.username }}</a>
+            <a href="{% url "accounts:profile" project.author.id %}">{{ project.author.username }}</a>
             · голосов: {{ project.votes_count }}
           </p>
         </div>
@@ -45,12 +48,12 @@
   <section>
     <div class="section-head">
       <h2>Ближайшие события</h2>
-      <a href="{% url 'events:list' %}">Вся афиша →</a>
+      <a href="{% url "events:list" %}">Вся афиша →</a>
     </div>
     <div class="card-grid">
       {% for event in events %}
         <div class="card">
-          <p><span class="badge">{{ event.get_event_type_display }}</span></p>
+          <p><span class="badge badge-approved">{{ event.get_event_type_display }}</span></p>
           <h3><a href="{{ event.get_absolute_url }}">{{ event.title }}</a></h3>
           <p class="meta">{{ event.starts_at|date:"j E, H:i" }} · {{ event.place }}</p>
         </div>
@@ -63,7 +66,7 @@
   <section>
     <div class="section-head">
       <h2>Ищут команду</h2>
-      <a href="{% url 'team_board:list' %}">Все объявления →</a>
+      <a href="{% url "team_board:list" %}">Все объявления →</a>
     </div>
     <div class="card-grid">
       {% for post in posts %}
@@ -71,7 +74,7 @@
           <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
           <p><b>Ищем:</b> {{ post.looking_for }}</p>
           <p class="meta">
-            <a href="{% url 'accounts:profile' post.author.id %}">{{ post.author.username }}</a>
+            <a href="{% url "accounts:profile" post.author.id %}">{{ post.author.username }}</a>
           </p>
         </div>
       {% empty %}

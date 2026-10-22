@@ -1,4 +1,6 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Модерация проектов · IT-Брянск{% endblock %}
 
 {% block content %}
   <h1>Очередь модерации</h1>
@@ -7,11 +9,11 @@
   {% for project in projects %}
     <div class="card">
       <h2>{{ project.title }}</h2>
-      <p>
+      <p class="meta">
         Автор: {{ project.author.username }}
         | {{ project.created_at|date:"d.m.Y H:i" }}
       </p>
-      <a href="{% url 'portfolio:moderate' project.pk %}">Проверить</a>
+      <a href="{% url "portfolio:moderate" project.pk %}" class="btn btn-sm">Проверить</a>
     </div>
   {% empty %}
     <p>Очередь пуста.</p>

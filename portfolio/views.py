@@ -81,7 +81,9 @@ def project_list(request):
             "q": q,
             "selected_tag": selected_tag,
             "tags": tags,
-            "filter_query": urlencode({"q": q, "tag": selected_tag or ""}),
+            "filter_query": urlencode(
+                {"q": q, "tag": selected_tag or "", "sort": sort}
+            ),
         },
     )
 

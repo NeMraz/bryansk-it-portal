@@ -1,21 +1,31 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}{{ owner.username }} · IT-Брянск{% endblock %}
 
 {% block content %}
 <section class="page-header">
     <h1>{{ owner.username }}</h1>
 </section>
 
-<section class="info-block">
-    {% if profile.avatar %}
-        <img src="{{ profile.avatar.url }}" alt="Аватар пользователя" width="150">
-    {% endif %}
+<section class="card">
+    <div style="display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center;">
+        {% if profile.avatar %}
+            <img src="{{ profile.avatar.url }}" alt="Аватар пользователя" style="width:120px; height:120px; border-radius:50%; object-fit:cover;">
+        {% else %}
+            <div style="width:120px; height:120px; border-radius:50%; background:var(--brand-light); color:var(--brand-hover); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:2rem;">
+                {{ owner.username|slice:":1" }}
+            </div>
+        {% endif %}
+    </div>
     <p><b>Школа или центр:</b> {{ profile.school|default:"не указано" }}</p>
     <p><b>Город:</b> {{ profile.city|default:"не указан" }}</p>
     <p><b>Интересы:</b> {{ profile.interests|default:"не указаны" }}</p>
     <p><b>О себе:</b> {{ profile.about|default:"пока пусто" }}</p>
 
     {% if user == owner %}
-        <a href="{% url 'accounts:profile_edit' %}" class="button primary">Редактировать профиль</a>
+        <p style="margin-top:10px;">
+            <a href="{% url "accounts:profile_edit" %}" class="btn">Редактировать профиль</a>
+        </p>
     {% endif %}
 </section>
 {% endblock %}

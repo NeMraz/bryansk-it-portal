@@ -1,9 +1,11 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Афиша событий · IT-Брянск{% endblock %}
 
 {% block content %}
   <h1>Афиша: мастер-классы и соревнования</h1>
 
-  <p>
+  <p class="meta">
     {% if show_past %}
       <a href="?">Предстоящие</a> | <b>Прошедшие</b>
     {% else %}
@@ -31,38 +33,30 @@
     </select>
 
     {% if show_past %}<input type="hidden" name="past" value="1">{% endif %}
-    <button type="submit">Показать</button>
+    <button type="submit" class="btn btn-sm">Показать</button>
     {% if event_type or month %}
-      <a href="?{% if show_past %}past=1{% endif %}">Сбросить</a>
+      <a href="?{% if show_past %}past=1{% endif %}" class="btn-ghost btn-sm">Сбросить</a>
     {% endif %}
   </form>
 
   <div class="card-grid">
     {% for event in page_obj %}
       <div class="card">
-        <p><span class="badge">{{ event.get_event_type_display }}</span></p>
+        <p><span class="badge badge-approved">{{ event.get_event_type_display }}</span></p>
         <h2><a href="{{ event.get_absolute_url }}">{{ event.title }}</a></h2>
         <p class="meta">{{ event.starts_at|date:"j E Y, H:i" }} · {{ event.place }}</p>
         <p>{{ event.description|truncatechars:150 }}</p>
       </div>
     {% empty %}
       {% if event_type or month %}
-        <p>По этим фильтрам ничего не найдено.</p>
+        <p class="empty">По этим фильтрам ничего не найдено.</p>
       {% elif show_past %}
-        <p>Прошедших событий пока нет.</p>
+        <p class="empty">Прошедших событий пока нет.</p>
       {% else %}
-        <p>Ближайших событий пока нет. Загляните позже!</p>
+        <p class="empty">Ближайших событий пока нет. Загляните позже!</p>
       {% endif %}
     {% endfor %}
   </div>
 
-  <div>
-    {% if page_obj.has_previous %}
-      <a href="?{{ filter_query }}&amp;page={{ page_obj.previous_page_number }}">← Назад</a>
-    {% endif %}
-    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
-    {% if page_obj.has_next %}
-      <a href="?{{ filter_query }}&amp;page={{ page_obj.next_page_number }}">Вперёд →</a>
-    {% endif %}
-  </div>
+  {% include "includes/pagination.html" with filter_query=filter_query %}
 {% endblock %}

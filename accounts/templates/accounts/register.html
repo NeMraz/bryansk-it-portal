@@ -1,18 +1,45 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Регистрация · IT-Брянск{% endblock %}
 
 {% block content %}
-<section class="form-block">
+<section class="form-block card">
     <h1>Регистрация</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <p>Подробнее:
-            <a href="{% url 'privacy' %}" target="_blank" rel="noopener">
+        <div class="form-group">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+        <div class="form-group">
+            {{ form.password1.label_tag }}
+            {{ form.password1 }}
+            {{ form.password1.errors }}
+        </div>
+        <div class="form-group">
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+            {{ form.password2.errors }}
+        </div>
+        <div class="form-group">
+            <label style="display:inline-flex; align-items:center; gap:6px; font-weight:600;">
+                {{ form.agree }}
+                {{ form.agree.label }}
+            </label>
+            {{ form.agree.errors }}
+        </div>
+        {% if form.non_field_errors %}
+            <div class="errorlist">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <p class="meta form-help">
+            Подробнее:
+            <a href="{% url "privacy" %}" target="_blank" rel="noopener">
                 политика обработки персональных данных
             </a>.
         </p>
-        <button type="submit">Зарегистрироваться</button>
+        <button type="submit" class="btn">Зарегистрироваться</button>
     </form>
-    <p>Уже есть аккаунт? <a href="{% url 'accounts:login' %}">Войти</a></p>
+    <p class="meta">Уже есть аккаунт? <a href="{% url "accounts:login" %}">Войти</a></p>
 </section>
 {% endblock %}

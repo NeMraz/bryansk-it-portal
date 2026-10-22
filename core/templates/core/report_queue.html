@@ -1,4 +1,6 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Жалобы · IT-Брянск{% endblock %}
 
 {% block content %}
   <h1>Жалобы</h1>
@@ -6,7 +8,7 @@
 
   {% for item in items %}
     <div class="card">
-      <p>
+      <p class="meta">
         <b>{{ item.report.get_kind_display }}</b>
         | Причина: {{ item.report.get_reason_display }}
         | {{ item.report.created_at|date:"d.m.Y H:i" }}
@@ -21,26 +23,27 @@
         <p>«{{ item.preview }}»</p>
         <p>
           <a href="{{ item.url }}">Открыть материал</a>
-          {% if item.report.kind == 'project' %}
-            | <a href="{% url 'portfolio:moderate' item.report.object_id %}">Проверка / снять с публикации</a>
-          {% elif item.report.kind == 'team_post' %}
-            | <a href="{% url 'team_board:moderate' item.report.object_id %}">Проверка / снять с публикации</a>
+          {% if item.report.kind == "project" %}
+            | <a href="{% url "portfolio:moderate" item.report.object_id %}">Проверка / снять с публикации</a>
+          {% elif item.report.kind == "team_post" %}
+            | <a href="{% url "team_board:moderate" item.report.object_id %}">Проверка / снять с публикации</a>
           {% endif %}
         </p>
       {% else %}
         <p><i>Материал уже удалён.</i></p>
       {% endif %}
 
-      <form method="post" action="{% url 'core:report_handle' item.report.pk %}">
+      <form method="post" action="{% url "core:report_handle" item.report.pk %}">
         {% csrf_token %}
         {% if item.target %}
-          {% if item.report.kind == 'comment' or item.report.kind == 'response' %}
+          {% if item.report.kind == "comment" or item.report.kind == "response" %}
             <button type="submit" name="action" value="delete"
+                    class="btn btn-outline"
                     onclick="return confirm('Удалить материал?');">Удалить материал</button>
           {% endif %}
         {% endif %}
-        <button type="submit" name="action" value="resolve">Рассмотрена</button>
-        <button type="submit" name="action" value="dismiss">Нарушений нет</button>
+        <button type="submit" name="action" value="resolve" class="btn">Рассмотрена</button>
+        <button type="submit" name="action" value="dismiss" class="btn btn-outline">Нарушений нет</button>
       </form>
     </div>
   {% empty %}

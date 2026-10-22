@@ -1,21 +1,27 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}Мои проекты · IT-Брянск{% endblock %}
 
 {% block content %}
   <h1>Мои проекты</h1>
-  <p><a href="{% url 'portfolio:create' %}" class="button primary">+ Добавить проект</a></p>
+  <p><a href="{% url "portfolio:create" %}" class="btn">+ Добавить проект</a></p>
 
   {% for project in projects %}
     <div class="card">
       <h2><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h2>
-      <p><b>Статус: {{ project.get_status_display }}</b></p>
+      <div class="status-chip status-chip-{{ project.status }}">
+        {{ project.get_status_display }}
+      </div>
 
-      {% if project.status == 'rejected' and project.moderator_comment %}
+      {% if project.status == "rejected" and project.moderator_comment %}
         <p>Причина отклонения: {{ project.moderator_comment }}</p>
         <p>Исправьте проект и сохраните его: он уйдёт на повторную проверку.</p>
       {% endif %}
 
-      <a href="{% url 'portfolio:edit' project.pk %}">Редактировать</a>
-      <a href="{% url 'portfolio:delete' project.pk %}">Удалить</a>
+      <p>
+        <a href="{% url "portfolio:edit" project.pk %}" class="btn-outline btn-sm">Редактировать</a>
+        <a href="{% url "portfolio:delete" project.pk %}" class="btn-ghost btn-sm">Удалить</a>
+      </p>
     </div>
   {% empty %}
     <p>У вас пока нет проектов.</p>

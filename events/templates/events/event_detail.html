@@ -1,16 +1,18 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }} · IT-Брянск{% endblock %}
 
 {% block content %}
   {% if not event.is_published %}
-    <div class="status">
+    <div class="status-chip status-chip-pending">
       <b>Событие скрыто с сайта (видно только модераторам).</b>
     </div>
   {% endif %}
 
-  <p><b>{{ event.get_event_type_display }}</b></p>
+  <p class="meta"><b>{{ event.get_event_type_display }}</b></p>
   <h1>{{ event.title }}</h1>
-  <p><b>Когда:</b> {{ event.starts_at|date:"j E Y, H:i" }}</p>
-  <p><b>Где:</b> {{ event.place }}</p>
+  <p class="meta"><b>Когда:</b> {{ event.starts_at|date:"j E Y, H:i" }}</p>
+  <p class="meta"><b>Где:</b> {{ event.place }}</p>
   <div>{{ event.description|linebreaks }}</div>
 
   {% if event.is_past %}
@@ -24,8 +26,8 @@
   {% endif %}
 
   {% if user.is_staff %}
-    <p><a href="{% url 'admin:events_event_change' event.pk %}">Изменить в админке</a></p>
+    <p><a href="{% url "admin:events_event_change" event.pk %}" class="btn-ghost btn-sm">Изменить в админке</a></p>
   {% endif %}
 
-  <p><a href="{% url 'events:list' %}">← Ко всей афише</a></p>
+  <p><a href="{% url "events:list" %}" class="btn-ghost btn-sm">← Ко всей афише</a></p>
 {% endblock %}
